@@ -17,5 +17,10 @@
   "bugs": {
     "url": "https://github.com/dsamuelson/dear-diary/issues"
   },
-  "homepage": "https://github.com/dsamuelson/dear-diary#readme"
+  "homepage": "https://github.com/dsamuelson/dear-diary#readme",
+  "dependencies": {
+    "dateformat": "^5.0.3",
+    "express": "^4.18.1",
+    "mongoose": "^6.3.4"
+  }
 }
