@@ -95,6 +95,8 @@ const userController = {
     deleteUser({ params }, res) {
         User.findOne({ _id: params.userId })
         .then(user => Thought.updateMany({}, { $pull: { reactions: { username: user.username }}}, { new: true }))
+        .then(() => User.findOne({ _id: params.userId }))
+        .then(user => Thought.deleteMany({ username: user.username }))
         .then(() => User.deleteOne({ _id: params.userId }))
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
