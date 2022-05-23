@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+// creates the user schema to be used in the mongo database
+
 const UserSchema = new Schema(
     {
         username: {

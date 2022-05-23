@@ -1,6 +1,8 @@
 const { Schema, model, Types } = require('mongoose');
 const moment = require('moment');
 
+// creates the reaction and Thought schema to be used in the mongo database
+
 const ReactionSchema = new Schema(
     {
         reactionId: {
