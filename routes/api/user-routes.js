@@ -9,6 +9,8 @@ const {
     deleteUser
 } = require('../../controllers/user-controller')
 
+// sets up routes for API calls and returns for Users
+
 router
 .route('/')
 .get(getAllUsers)

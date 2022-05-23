@@ -1,6 +1,9 @@
 const { User, Thought } = require('../models');
 
+// set up the controller for any Thought model related API functions
+
 const thoughtController = {
+    // gets all thoughts from database
     getAllThoughts(req, res) {
         Thought.find({})
         .populate({
@@ -15,7 +18,7 @@ const thoughtController = {
             res.status(400).json(err);
         });
     },
-
+    // gets a single thought based on id
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.thoughtId })
         .populate({
@@ -29,7 +32,7 @@ const thoughtController = {
             res.status(400).json(err);
         });
     },
-
+    // adds a thought to a user's thoughts array
     addThought({ params, body }, res) {
         Thought.create(body)
         .then(({ _id }) => {
@@ -51,7 +54,7 @@ const thoughtController = {
             res.status(500).json(err);
         });
     },
-
+    // updates a thought based on the thought's id
     updateThought({ params, body}, res) {
         Thought.findOneAndUpdate({ _id: params.thoughtId }, body, { new: true, runValidators: true })
         .then(dbThoughtData => {
@@ -66,7 +69,7 @@ const thoughtController = {
             res.status(400).json(err);
         })
     },
-
+    // adds a reaction to a specific thought using the thought's ID
     addReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
@@ -85,7 +88,7 @@ const thoughtController = {
             res.status(500).json(err);
         });
     },
-
+    // gets all reactions for a specific thought (mostly used in testing)
     getReactionsForThought({ params }, res) {
         Thought.findOne({ _id: params.thoughtId })
         .populate({
@@ -106,7 +109,7 @@ const thoughtController = {
             res.status(500).json(err);
         })
     },
-
+    // removes a thought based on its ID
     removeThought({ params }, res) {
         Thought.findOneAndDelete({ _id: params.thoughtId })
         .then(deletedThought => {
@@ -132,7 +135,7 @@ const thoughtController = {
             res.status(500).json(err);
         });
     },
-
+    // removes a thought's reaction based on the thought's ID and the reaction's ID
     removeReaction({ params }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
