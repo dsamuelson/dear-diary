@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
     getAllUsers(req, res) {
@@ -21,7 +21,7 @@ const userController = {
     },
 
     getUserById({ params }, res) {
-        User.findOne({ _id: params.id })
+        User.findOne({ _id: params.userId })
         .populate({
             path: 'thoughts',
             select: '-__v'
@@ -48,7 +48,7 @@ const userController = {
     },
 
     updateUser({ params, body}, res) {
-        User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+        User.findOneAndUpdate({ _id: params.userId }, body, { new: true, runValidators: true })
         .then(dbUserData => {
             if (!dbUserData) {
                 res.status(404).json({ message: 'No User found with this ID' });
@@ -62,8 +62,40 @@ const userController = {
         })
     },
 
+    addFriend({ params }, res) {
+        User.findOne({ _id: params.userId })
+        .then(user => User.updateOne({ _id: user.id}, { $push: { friends: params.friendId }}, { new: true }))
+        .then(() => User.findOne({ _id: params.friendId}))
+        .then(friend => User.updateOne({_id: friend.id }, { $push: { friends: params.userId }}, { new: true }))
+        .then(dbUserData => {
+            if (!dbUserData) {
+                res.status(404).json({ message: 'No User found with this ID' });
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(400).json(err);
+        });
+    },
+
+    removeFriend({ params }, res) {
+        User.findOne({ _id: params.userId })
+        .then(user => User.updateOne({ _id: user.id}, { $pull: { friends: params.friendId }}, { new: true }))
+        .then(() => User.findOne({ _id: params.friendId }))
+        .then(friend => User.updateOne({_id: friend.id }, { $pull: { friends: params.userId }}, { new: true }))
+        .then(dbUserData => res.json(dbUserData))
+        .catch(err => {
+            console.log(err);
+            res.status(400).json(err);
+        })
+    },
+
     deleteUser({ params }, res) {
-        User.findOneAndDelete({ _id: params.id })
+        User.findOne({ _id: params.userId })
+        .then(user => Thought.updateMany({}, { $pull: { reactions: { username: user.username }}}, { new: true }))
+        .then(() => User.deleteOne({ _id: params.userId }))
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
             console.log(err);
